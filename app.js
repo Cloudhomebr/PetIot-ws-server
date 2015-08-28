@@ -1,65 +1,62 @@
+/*
+ * Declaracao do servidor websocket, utilizacao da biblioteca WS, este servidor apenas irá receber e 
+ * transimitir a mensagem ao seu destinatario, toda inteligencia esta implementada no lado do cliente
+ * e no lado do equipamento Freescale
+ */
+var porta = 3000;
 var WebSocketServer = require('ws').Server
-  , wss = new WebSocketServer({ port: 3000, perMessageDeflate: false });
+  , wss = new WebSocketServer({ port: porta, perMessageDeflate: false });
+
+/*
+ * Variavel para amarzenar as conexoes client e server
+ */
 var webSockets = {};
 
-
+/*
+ * Funcao para enviar mensagem de broadcast para todas as conexoes
+ */
 function broadcast(data) {
 	wss.clients.forEach(function each(client) {
 		client.send(JSON.stringify(data));
 	});
 }
 
+/*
+ * Inicio do servidor WebSocket
+ */
 wss.on('connection', function connection(ws) {
+	//### Pega o identificador da conecao
 	var userID 		    = ws.upgradeReq.url.substr(1).trim();
 	webSockets[userID]  = ws;
 	console.log('Novo cliente conectado: ' + userID);
 
-
+	/*
+	 * Evento de recebimento de mensagem
+	 */
 	ws.on('message', function incoming(messagemJSON) {
-		console.log(messagemJSON);
+		//### Recebe a mensagem e parse para um objeto JSON
 		var mensagem = JSON.parse(messagemJSON);
+		console.log("Mensagem recebida: " + messagemJSON + " - Destino da mensagem: " mensagem.destino);
+
+
 		if (mensagem.destino == "servidor" && mensagem.tipo != "conexao") {
+			//### Mensagem do aplicativo do cliente para o servidor
 			if(webSockets["ws/freescale"] != undefined){
 				console.log("-- ENVIANDO");
-				console.log(mensagem);
 				webSockets["ws/freescale"].send(messagemJSON);
 			}
 		} else {
+			//### Mensagem do aplicativo do servidor para o cliente
 			if(webSockets["ws/cliente"] != undefined){
 				console.log("-- RECEBENDO");
-				console.log(mensagem);
 				webSockets["ws/cliente"].send(messagemJSON);
+
 			}
-		}
-
-		// mensagens do client
-		switch (mensagem.mensagem) {
-			case "comida":
-				break;
-
-			case "reservatorio":
-				break;
-
-			case "toca_audio":
-				break;
-
-			case "temp_humidade":
-				break;
-		}
-
-		// mensagens da placa
-		switch (mensagem.mensagem) {
-			case "resp_comida":
-				break;
-
-			case "resp_reservatorio":
-				break;
-
-			case "resp_toca_audio":
-				break;
-
-			case "resp_temp_humidade":
-				break;
 		}
 	});
 });
+
+/*
+ * Informacao do inicio do servidor para fins de log
+ */
+ console.log("Iniciando servidor WebSocket server na porta: " + porta);
