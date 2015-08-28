@@ -36,19 +36,19 @@ wss.on('connection', function connection(ws) {
 	ws.on('message', function incoming(messagemJSON) {
 		//### Recebe a mensagem e parse para um objeto JSON
 		var mensagem = JSON.parse(messagemJSON);
-		console.log("Mensagem recebida: " + messagemJSON + " - Destino da mensagem: " mensagem.destino);
+		console.log("Mensagem recebida: " + messagemJSON + " - Destino da mensagem: " + mensagem.destino);
 
 
 		if (mensagem.destino == "servidor" && mensagem.tipo != "conexao") {
 			//### Mensagem do aplicativo do cliente para o servidor
 			if(webSockets["ws/freescale"] != undefined){
-				console.log("-- ENVIANDO");
+				console.log("-- ENVIANDO MSG PARA FREESCALE");
 				webSockets["ws/freescale"].send(messagemJSON);
 			}
 		} else {
 			//### Mensagem do aplicativo do servidor para o cliente
 			if(webSockets["ws/cliente"] != undefined){
-				console.log("-- RECEBENDO");
+				console.log("-- RECEBENDO MENSAGEM DO APLICATIVO CLIENTE");
 				webSockets["ws/cliente"].send(messagemJSON);
 
 			}
@@ -57,6 +57,6 @@ wss.on('connection', function connection(ws) {
 });
 
 /*
- * Informacao do inicio do servidor para fins de log
+ * Memsagem de inicio do servidor para fins de log
  */
  console.log("Iniciando servidor WebSocket server na porta: " + porta);
