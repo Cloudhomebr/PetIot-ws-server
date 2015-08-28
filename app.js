@@ -38,7 +38,9 @@ wss.on('connection', function connection(ws) {
 		var mensagem = JSON.parse(messagemJSON);
 		console.log("Mensagem recebida: " + messagemJSON + " - Destino da mensagem: " + mensagem.destino);
 
-
+		/*
+		 * Verifica qual o destino da mensagem
+		 */
 		if (mensagem.destino == "servidor" && mensagem.tipo != "conexao") {
 			//### Mensagem do aplicativo do cliente para o servidor
 			if(webSockets["ws/freescale"] != undefined){
