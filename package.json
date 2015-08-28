@@ -1,0 +1,14 @@
+{
+  "name": "PetIot-ws-server",
+  "version": "1.0.0",
+  "author": "Joao Henrique<jonnes1@gmail.com>",
+  "description": "Servidor NodeJS Websocket - Casa Conectada",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^0.7.2"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
